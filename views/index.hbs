@@ -1,0 +1,108 @@
+    <div class="container">
+      <div class="row">
+        <div class="col s12 m12">
+          <h3>
+            {{title}}
+            <a href="javascript:refreshState()"><i class="material-icons right">refresh</i></a>
+          </h3>
+        </div>
+      </div>
+      <div class="row">
+      {{#each relays}}
+        <div class="col s12 m6">
+          <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+              <span class="card-title">{{title}}</span>
+              <p>{{description}}</p>
+            </div>
+            <div class="card-action">
+              <div class="switch">
+              {{#ifeq type 'pulse'}}
+                <a class="waves-effect waves-light btn-large disabled" onClick="pulse({{@index}})"><i class="material-icons right">power_settings_new</i>ON/OFF</a>
+              {{/ifeq}}
+              {{#ifeq type 'NO'}}
+                <label class="btn-large waves-effect waves-light disabled" onClick="toggleRelayNO({{@index}}); return false;">
+                  Off
+                  <input type="checkbox" id="relay{{@index}}" disabled="true"/>
+                  <span class="lever"></span>
+                  On
+                </label>
+              {{/ifeq}}
+              {{#ifeq type 'NC'}}
+                <label class="btn-large waves-effect waves-light disabled" onClick="toggleRelayNC({{@index}}); return false;">
+                  Off
+                  <input type="checkbox" id="relay{{@index}}" disabled="true"/>
+                  <span class="lever"></span>
+                  On
+                </label>
+              {{/ifeq}}
+              </div>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+      </div>
+    </div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script type="text/javascript">
+      const relays = [
+        {{#each relays}}
+          { type: '{{type}}', index: {{@index}} },
+        {{/each}}
+      ];
+      function refreshState() {
+        let xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+          if (xhr.status == 200) {
+            let status = JSON.parse(xhr.responseText);
+            let idx = 0;
+            status.state.forEach(state => {
+              if (relays[idx].type == 'NC' || relays[idx].type == 'NO') {
+                  document.getElementById('relay' + idx).checked = status.state[idx] ^ (relays[idx].type == 'NC');
+              }
+              idx++;
+            });
+
+            for (button of document.getElementsByClassName("btn-large")) {
+              button.classList.remove('disabled');
+            }
+            for (button of document.getElementsByTagName("input")) {
+              button.disabled = false;
+            }
+          }
+      	};
+        xhr.open('GET', '/relay');
+        xhr.send();
+        xhr.onload();
+      }
+
+      function toggleRelay(relay, invert) {
+        var xhr = new XMLHttpRequest();
+        let newstate = document.getElementById('relay' + relay).checked ^ invert? 'off' : 'on';
+        xhr.onload = function () {
+          if (xhr.status == 200) {
+            refreshState();
+          }
+      	};
+        xhr.open('POST', '/relay/' + relay + '/' + newstate);
+        xhr.send();
+      }
+
+      function toggleRelayNC(relay) {
+        toggleRelay(relay, true);
+      }
+
+      function toggleRelayNO(relay) {
+        toggleRelay(relay, false);
+      }
+
+      function pulse(relay) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/relay/' + relay + '/pulse');
+        xhr.send();
+      }
+
+      window.addEventListener("load", function(event) {
+        refreshState();
+      });
+    </script>

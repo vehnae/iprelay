@@ -1,0 +1,29 @@
+module.exports = {
+  title: "Power control",
+  relays: [
+    {
+      pins: 24,
+      type: "NO",
+      title: "Aurora Flat Panel",
+      description: "Power feed to the flat panel. SGP should control this automatically as a part of the sequence."
+    },
+    {
+      pins: 25,
+      type: "NC",
+      title: "NUC",
+      description: "DC output to the imaging computer. Enabled by default, can be toggled to force a computer reboot."
+    },
+    {
+      pins: 28,
+      type: "NC",
+      title: "12V mains",
+      description: "Main 12V feed to the KomaHub mounted on the telescope. Enabled by default, toggle to power cycle all equipment."
+    },
+    {
+      pins: 29,
+      type: "pulse",
+      title: "10Micron GM1000HPS",
+      description: "Remote power switch for the 10Micron mount. The mount will take a while to boot up / shut down."
+    }
+  ]
+}
