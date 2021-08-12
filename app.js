@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
 const exphbs  = require('express-handlebars');
+const basicAuth = require('express-basic-auth');
 const config = require('./config');
 const relays = require('./relays');
 const app = express();
@@ -18,6 +19,7 @@ app.engine('hbs', exphbs({
 }));
 app.set('view engine', 'hbs');
 
+app.use(basicAuth({users: config.auth, challenge: true, realm: config.realm}));
 app.use('/', router);
 app.use(logger('dev'));
 app.use(express.json());
@@ -66,5 +68,7 @@ router.post('/relay/:relay/:operation', (req, res) => {
   }
   res.send();
 });
+
+relays.init();
 
 module.exports = app;
