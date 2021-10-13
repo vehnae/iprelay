@@ -1,29 +1,67 @@
 module.exports = {
   title: "Power control",
+  link: "/",
+  auth: { '': '' },
+  realm: 'Pilvilinna',
   relays: [
     {
-      pins: 24,
+      url: "/roof/open",
+      type: "button",
+      title: "Katto auki",
+      action: "AVAA"
+    },
+    {
+      url: "/roof/close",
+      type: "button",
+      title: "Katto kiinni",
+      action: "SULJE"
+    },
+    {
+      url: "/roof/stop",
+      type: "button",
+      title: "Katto seis",
+      description: "Pysäyttää kattomoottorin",
+      action: "SEIS"
+    },
+    {
+      pins: 5,
       type: "NO",
-      title: "Aurora Flat Panel",
-      description: "Power feed to the flat panel. SGP should control this automatically as a part of the sequence."
+      title: "Kattomoottori",
+      description: "Kattomoottorin virta päälle/pois",
+      hide: true
     },
     {
-      pins: 25,
-      type: "NC",
-      title: "NUC",
-      description: "DC output to the imaging computer. Enabled by default, can be toggled to force a computer reboot."
+      pins: 6,
+      type: "NO",
+      title: "Suunta",
+      description: "Kattomoottorin pyörityssuunta. ON = auki, OFF = kiinni",
+      hide: true
     },
     {
-      pins: 28,
-      type: "NC",
-      title: "12V mains",
-      description: "Main 12V feed to the KomaHub mounted on the telescope. Enabled by default, toggle to power cycle all equipment."
+      pins: 13,
+      type: "NO",
+      title: "Rajakytkimen ohitus (katto kiinni)",
+      description: "Ohittaa katon rajakytkimen katon ollessa kiinni.",
+      hide: true
     },
     {
-      pins: 29,
-      type: "pulse",
-      title: "10Micron GM1000HPS",
-      description: "Remote power switch for the 10Micron mount. The mount will take a while to boot up / shut down."
+      pins: 16,
+      type: "NO",
+      title: "Rajakytkimen ohitus (katto auki)",
+      description: "Ohittaa katon rajakytkimen katon ollessa auki.",
+      hide: true
+    },
+    {
+      pins: 19,
+      type: "NO",
+      title: "IR-valaistus",
+      description: "Observatorion IR-valot"
+    },
+    {
+      pins: 20,
+      type: "NO",
+      title: "Flattikalvot",
+      description: "Observatorion flattikalvot"
     }
   ]
 }

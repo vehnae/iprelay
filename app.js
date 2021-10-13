@@ -69,6 +69,75 @@ router.post('/relay/:relay/:operation', (req, res) => {
   res.send();
 });
 
+router.post('/roof/open', (req, res) => {
+  // kaikki pois
+  relays.off(0);
+  relays.on(1); // suunta = auki
+  relays.on(2); // rajakytkimen ohitus
+  relays.off(3);
+
+  // 1s myöhemmin
+  setTimeout(() => {
+    relays.on(0); // moottori päälle
+
+    // 10s myöhemmin
+    setTimeout(() => {
+      relays.off(2); // rajakytkimen ohitus pois
+    }, 10000);
+
+    // 180s myöhemmin
+    setTimeout(() => {
+      relays.off(0); // moottori pois
+
+      // 1s myöhemmin
+      setTimeout(() => {
+        relays.off(1); // suunta = kiinni
+        relays.on(4); // IR valot päälle
+      }, 1000);
+    }, 180000);
+  }, 1000);
+  res.status(200);
+  res.send();
+});
+
+router.post('/roof/close', (req, res) => {
+  // kaikki pois
+  relays.off(0);
+  relays.off(1); // suunta = kiinni
+  relays.off(2);
+  relays.on(3); // rajakytkimen ohitus
+  relays.off(4); // IR-valot pois
+
+  // 1s myöhemmin
+  setTimeout(() => {
+    relays.on(0); // moottori päälle
+
+    // 10s myöhemmin
+    setTimeout(() => {
+      relays.off(3); // rajakytkimen ohitus pois
+    }, 10000);
+
+    // 180s myöhemmin
+    setTimeout(() => {
+      relays.off(0); // moottori pois
+
+      // 1s myöhemmin
+      setTimeout(() => {
+        relays.off(1); // suunta = kiinni
+      }, 1000);
+    }, 180000);
+  }, 1000);
+  res.status(200);
+  res.send();
+});
+
+router.post('/roof/stop', (req, res) => {
+  relays.off(0); // moottori seis
+  res.status(200);
+  res.send();
+});
+
+
 relays.init();
 
 module.exports = app;

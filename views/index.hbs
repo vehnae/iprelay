@@ -5,11 +5,12 @@
             {{title}}
             <a href="javascript:refreshState()"><i class="material-icons right">refresh</i></a>
           </h3>
+          <a href="javascript:show()">more...</a>
         </div>
       </div>
       <div class="row">
       {{#each relays}}
-        <div class="col s12 m6">
+        <div class="col s12 m6 {{#if hide}}hidden{{/if}}">
           <div class="card blue-grey darken-1">
             <div class="card-content white-text">
               <span class="card-title">{{title}}</span>
@@ -17,6 +18,9 @@
             </div>
             <div class="card-action">
               <div class="switch">
+              {{#ifeq type 'button'}}
+                <a class="waves-effect waves-light btn-large disabled" onClick="post('{{url}}')">{{action}}</a>
+              {{/ifeq}}
               {{#ifeq type 'pulse'}}
                 <a class="waves-effect waves-light btn-large disabled" onClick="pulse({{@index}})"><i class="material-icons right">power_settings_new</i>ON/OFF</a>
               {{/ifeq}}
@@ -100,6 +104,18 @@
         var xhr = new XMLHttpRequest();
         xhr.open('POST', '/relay/' + relay + '/pulse');
         xhr.send();
+      }
+
+      function post(url) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', url);
+        xhr.send();
+      }
+
+      function show() {
+        Array.from(document.querySelectorAll('div.hidden')).forEach(function(el) { 
+            el.classList.remove('hidden');
+        });
       }
 
       window.addEventListener("load", function(event) {
